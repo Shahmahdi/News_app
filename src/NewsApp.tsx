@@ -8,18 +8,26 @@ interface NewsProps {
 export const NewsApp = () => {
 
   const [news, setNews] = useState([] as NewsProps[]);
-  const [searchQuery, setSearchQuery] = useState('react')
+  const [searchQuery, setSearchQuery] = useState('react');
+  const [url, setUrl] = useState('https://hn.algolia.com/api/v1/search?query=react');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`https://hn.algolia.com/api/v1/search?query=${searchQuery}`)
+    axios.get(url)
     .then((res: any) => { setNews(res.data.hits); })
+    .then(() => setLoading(false))
     .catch((err: any) => console.log(err));
-  }, [searchQuery]);
+  }, [url]);
 
   return (
     <div>
-      <form>
-        <h4>Search text: </h4>
+      <form 
+        onSubmit={e => {
+          e.preventDefault();
+          setUrl(`https://hn.algolia.com/api/v1/search?query=${searchQuery}`)
+        }}
+      >
+        <h4>Search news about: </h4>
         <input 
           type="text"
           value={searchQuery}
@@ -27,8 +35,10 @@ export const NewsApp = () => {
             setSearchQuery(e.target.value);
           }}
         />
+        <button>Submit</button>
       </form>
       <h2>React News:</h2>
+      {loading ? <h2>Loading...</h2> : undefined}
       <ul>
         {news.map((n) => (
           <li>{n.title}</li>
