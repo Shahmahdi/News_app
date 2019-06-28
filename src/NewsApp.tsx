@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Loading } from './component/Loading';
+import { SearchForm } from './component/SearchFrom';
+import { NewsList } from './component/NewsList';
 const axios = require('axios');
 
-interface NewsProps {
+export interface NewsProps {
   title: string
 }
 
@@ -21,30 +24,14 @@ export const NewsApp = () => {
 
   return (
     <div>
-      <form 
-        onSubmit={e => {
-          e.preventDefault();
-          setUrl(`https://hn.algolia.com/api/v1/search?query=${searchQuery}`)
-        }}
-      >
-        <h4>Search news about: </h4>
-        <input 
-          type="text"
-          value={searchQuery}
-          onChange={e => {
-            setSearchQuery(e.target.value);
-          }}
-        />
-        <button>Submit</button>
-      </form>
+      <SearchForm 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        setUrl={setUrl}
+      />
       <h2>React News:</h2>
-      {loading ? <h2>Loading...</h2> : undefined}
-      <ul>
-        {news.map((n) => (
-          <li>{n.title}</li>
-        ))}
-        {console.log(news)}
-      </ul>
+      {loading ? <Loading /> : undefined}
+      <NewsList news={news} />
     </div>
   );
 };
